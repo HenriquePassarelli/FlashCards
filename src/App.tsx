@@ -1,5 +1,4 @@
 import { CardContextProvider } from "./Contex/CardContext";
-
 import Page from "./Pages/MainPage";
 
 export default function App() {

@@ -3,7 +3,6 @@ import React, {
   ReactNode,
   useState,
   useContext,
-  useEffect,
   Dispatch,
   SetStateAction,
 } from "react";
@@ -14,17 +13,17 @@ type Cards = {
 }
 
 type Item = {
-  item: string | null
+  item: string 
 }
 type CardContextData = {
   cards: Cards[];
   setCards: Dispatch<SetStateAction<Array<Cards>>>;
-  addCard?: () => void;
-  deleteCard?: () => void;
-  modalShow?: boolean;
+  addCard: () => void;
+  deleteCard: () => void;
+  modalShow: boolean;
   setModalShow: React.Dispatch<React.SetStateAction<boolean>>
-  topics: Item[]
-  setTopics: Dispatch<SetStateAction<Array<Item>>>;
+  topics: string[]
+  setTopics: Dispatch<SetStateAction<string[]>>;
 };
 
 
@@ -37,7 +36,7 @@ type ProviderProps = {
 export function CardContextProvider({ children }: ProviderProps): JSX.Element {
   const [cards, setCards] = useState<Cards[]>([]);
   const [modalShow, setModalShow] = useState<boolean>(false);
-  const [topics, setTopics] = useState<Item[]>([])
+  const [topics, setTopics] = useState<string[]>([])
 
   const addCard = () => { };
   const deleteCard = () => { };

@@ -1,4 +1,4 @@
-import React, { useState, MouseEventHandler } from "react";
+import React, { useState } from "react";
 import { Modal, Button, InputGroup, FormControl, Form, DropdownButton, Dropdown } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useCard } from "../Contex/CardContext";
@@ -10,38 +10,34 @@ type Props = {
 
 const CardModal = (props: Props): JSX.Element => {
   const { setModalShow, topics, setTopics, setCards, cards } = useCard();
-  const [newTopic, setNewTopic] = useState<string | null>('')
-  const [selectedTopic, setSelectedTopic] = useState<string | null>('')
+  const [newTopic, setNewTopic] = useState<string >('')
   const [content, setContent] = useState<string>('')
 
-  const newListTopic = (): void => {
-    
-    if (topics.every(topic => topic.item == newTopic)) {
-      const newListTopic = [...topics]
-      newListTopic.push({ item: newTopic })
+  const newListTopic = (): void => {    
+    if (topics.every(topic => topic !== newTopic)) {
+      const newListTopic:string[] = [...topics]
+      newListTopic.push( newTopic )
       setTopics(newListTopic)
+      console.log(newListTopic)
     }
-
   }
 
   const handleSelect = (e: React.MouseEvent<HTMLElement, MouseEvent>): void => {
     const event = e.target as HTMLInputElement
-    console.log(event.value)
-    let value
-    if (event.getAttribute('value') == null) {
-      value = ''
-    } else {
-      value = event.getAttribute('value')
-    }
-    setNewTopic(value)
-    setSelectedTopic(value)
+    setNewTopic(Object.values(event)[1].value)
   }
 
   const addNewCard = () => {
     setModalShow(false)
+    if(!topics.some(topic => newTopic === topic)){
+      newListTopic()
+    }
     const newCard = [...cards]
-    newCard.push({ topic: selectedTopic, content })
+    newCard.push({ topic: newTopic, content })
     setCards(newCard)
+    console.log(newCard)
+    console.log(topics)
+    
   }
 
 
@@ -67,13 +63,13 @@ const CardModal = (props: Props): JSX.Element => {
           >
             {topics.map((item, index) => {
               return (<>
-                <Dropdown.Item key={index} value={item.item} onClick={(e) => handleSelect(e)}>{item.item}</Dropdown.Item>
+                <Dropdown.Item key={index} value={item} onClick={(e) => handleSelect(e)}>{item}</Dropdown.Item>
               </>)
             })}
 
           </DropdownButton>
 
-          <FormControl onChange={(e: { target: { value: any; }; }) => setNewTopic(e.target.value)} id="list" aria-label="list" placeholder="Select one or type to add one " />
+          <FormControl value={newTopic} onChange={(e: { target: { value: any; }; }) => setNewTopic(e.target.value)} id="list" aria-label="list" placeholder="Select one or type to add one " />
           <Button onClick={newListTopic} variant="secondary" id="button-addon2">
             Add to list
           </Button>
