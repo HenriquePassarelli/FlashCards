@@ -9,12 +9,11 @@ import React, {
 
 type Cards = {
   topic: string | null,
-  content: string
+  frontCard: string
+  backCard: string
+
 }
 
-type Item = {
-  item: string 
-}
 type CardContextData = {
   cards: Cards[];
   setCards: Dispatch<SetStateAction<Array<Cards>>>;

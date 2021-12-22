@@ -1,19 +1,33 @@
-
-import { Card, Button } from "react-bootstrap";
+import React, { useState } from 'react';
+import { Card, Button, CloseButton } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useCard } from '../Context/Context';
 
 type Props = {
   header: string | null;
-  body?: string;
+  front: string;
+  back: string
+  id: number
 };
 
 const CardElement = (props: Props) => {
+  const { cards, setCards } = useCard();
+  const [flip, setFlip] = useState<boolean>(false)
+  const deleteCard = () => {
+    const copyCards = [...cards]
+    copyCards.splice(props.id, 1)
+    setCards(copyCards)
+  }
   return (
-    <Card style={{ width: '18rem' }} className=" m-2" >
-      <Card.Header>{props.header}</Card.Header>
+    <Card key={props.id} style={{ width: '18rem' }} className=" m-2" >
+      <Card.Header className="d-flex justify-content-between">{props.header} <CloseButton onClick={deleteCard} /></Card.Header>
       <Card.Body>
-        <Card.Text>{props.body}</Card.Text>
-        <Button variant="dark">Flip Card</Button>
+        {flip ?
+          <Card.Text>{props.back}</Card.Text>
+          :
+          <Card.Text>{props.front}</Card.Text>
+        }
+        <Button variant="dark" onClick={() => setFlip((flip) => !flip)}>Flip Card</Button>
       </Card.Body>
     </Card>
   );

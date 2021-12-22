@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Button, InputGroup, FormControl, Form, DropdownButton, Dropdown } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useCard } from "../Contex/CardContext";
+import { useCard } from "../Context/Context";
 type Props = {
   show?: boolean,
   onHide: () => void
@@ -10,15 +10,15 @@ type Props = {
 
 const CardModal = (props: Props): JSX.Element => {
   const { setModalShow, topics, setTopics, setCards, cards } = useCard();
-  const [newTopic, setNewTopic] = useState<string >('')
-  const [content, setContent] = useState<string>('')
+  const [newTopic, setNewTopic] = useState<string>('')
+  const [frontCard, setFrontCard] = useState<string>('')
+  const [backCard, setBackCard] = useState<string>('')
 
-  const newListTopic = (): void => {    
+  const newListTopic = (): void => {
     if (topics.every(topic => topic !== newTopic)) {
-      const newListTopic:string[] = [...topics]
-      newListTopic.push( newTopic )
+      const newListTopic: string[] = [...topics]
+      newListTopic.push(newTopic)
       setTopics(newListTopic)
-      console.log(newListTopic)
     }
   }
 
@@ -29,15 +29,15 @@ const CardModal = (props: Props): JSX.Element => {
 
   const addNewCard = () => {
     setModalShow(false)
-    if(!topics.some(topic => newTopic === topic)){
+    if (!topics.some(topic => newTopic === topic)) {
       newListTopic()
     }
     const newCard = [...cards]
-    newCard.push({ topic: newTopic, content })
+    newCard.push({ topic: newTopic, frontCard, backCard })
     setCards(newCard)
-    console.log(newCard)
-    console.log(topics)
-    
+    setFrontCard('')
+    setBackCard('')
+    setNewTopic('')
   }
 
 
@@ -54,17 +54,17 @@ const CardModal = (props: Props): JSX.Element => {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form.Label htmlFor="list">List</Form.Label>
+        <Form.Label htmlFor="list">Topic List</Form.Label>
         <InputGroup className="mb-3">
           <DropdownButton
             variant="outline-secondary"
-            title="List Topic"
+            title="Topic"
             id="input-group-dropdown-1"
           >
             {topics.map((item, index) => {
-              return (<>
+              return (
                 <Dropdown.Item key={index} value={item} onClick={(e) => handleSelect(e)}>{item}</Dropdown.Item>
-              </>)
+              )
             })}
 
           </DropdownButton>
@@ -74,8 +74,13 @@ const CardModal = (props: Props): JSX.Element => {
             Add to list
           </Button>
         </InputGroup>
+        <Form.Label htmlFor="list">Front card</Form.Label>
         <InputGroup>
-          <FormControl as="textarea" aria-label="textarea" placeholder="Add your text here" onChange={(e: { target: { value: any; }; }) => setContent(e.target.value)} />
+          <FormControl as="textarea" aria-label="textarea" placeholder="Add your text here" onChange={(e: { target: { value: any; }; }) => setFrontCard(e.target.value)} />
+        </InputGroup>
+        <Form.Label htmlFor="list">Back card</Form.Label>
+        <InputGroup>
+          <FormControl as="textarea" aria-label="textarea" placeholder="Add your text here" onChange={(e: { target: { value: any; }; }) => setBackCard(e.target.value)} />
         </InputGroup>
       </Modal.Body>
       <Modal.Footer>
