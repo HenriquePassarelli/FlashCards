@@ -69,7 +69,7 @@ const CardModal = (props: Props): JSX.Element => {
 
           </DropdownButton>
 
-          <FormControl value={newTopic} onChange={(e: { target: { value: any; }; }) => setNewTopic(e.target.value)} id="list" aria-label="list" placeholder="Select one or type to add one " />
+          <FormControl value={newTopic} onChange={(e: { target: { value: any; }; }) => setNewTopic(e.target.value)} id="list" aria-label="list" placeholder="Select one or type to add one " autoComplete="off" />
           <Button onClick={newListTopic} variant="secondary" id="button-addon2">
             Add to list
           </Button>
