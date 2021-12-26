@@ -1,5 +1,6 @@
 import React, { useState, Dispatch, SetStateAction } from "react";
 import { Modal, Button, FormControl, Form } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 type Props = {
     show?: boolean,
@@ -8,23 +9,54 @@ type Props = {
 
 const LoginModal = (props: Props) => {
 
-
+    const [showPassword, setShowPassword] = useState<boolean>(false)
+    const [email, setEmail] = useState<string>('')
+    const [emailValidate, setEmailValidate] = useState<boolean>(false)
+    const [password, setPassword] = useState<string>('')
+    const [passwordValidate, setPasswordValidate] = useState<boolean>(false)
 
     const [validated, setValidated] = useState(false);
 
     const handleSubmit = (event: { currentTarget: any, preventDefault: () => any, stopPropagation: () => void }) => {
         event.preventDefault();
-        const form = event.currentTarget;
-        if (form.checkValidity() === false) {
-            event.preventDefault();
-            event.stopPropagation();
-            setValidated(false);
-            return
+        event.stopPropagation();
+        const emailLength = email.length === 0
+        const passwordLength = password.length === 0
+        validateEmail()
+        validatePassword()
 
+        if (emailValidate || passwordValidate || emailLength || passwordLength) {
+            setValidated(false);
+            console.log('here')
+            return
+        } else {
+            props.close(true)
+            setValidated(true);
         }
-        props.close(true)
-        setValidated(true);
     };
+
+    const validateEmail = () => {
+        const isValid = email.match(
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        );
+        if (isValid !== null) {
+            setEmailValidate(false)
+            return
+        }
+        setEmailValidate(true)
+
+    }
+
+    const validatePassword = () => {
+        if (password.length > 8 && password.length < 20) {
+            return setPasswordValidate(false)
+        }
+        setPasswordValidate(true)
+    }
+
+    // console.log(emailValidate)
+    // console.log(passwordValidate)
+
 
     return (
         <Modal {...props}
@@ -35,11 +67,25 @@ const LoginModal = (props: Props) => {
                 <Form validated={validated} onSubmit={handleSubmit}>
                     <Form.Group className="mb-3" controlId="formGroupEmail">
                         <Form.Label>Email address</Form.Label>
-                        <FormControl type="email" placeholder="Enter email" required />
+                        <FormControl type="email" placeholder="Enter email" onChange={(e: { target: { value: any; }; }): void => {
+                            setEmail(e.target.value)
+                        }} onBlur={validateEmail} isInvalid={emailValidate} />
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formGroupPassword">
                         <Form.Label>Password</Form.Label>
-                        <FormControl type="password" placeholder="Password" required />
+                        <FormControl type={showPassword ? "text" : "password"} placeholder="Password" onChange={(e: { target: { value: any; }; }): void => {
+
+                            setPassword(e.target.value)
+                        }} onBlur={validatePassword} isInvalid={passwordValidate} />
+                        <Form.Text id="passwordHelpBlock" muted>
+                            Your password must be 8-20 characters long.
+                        </Form.Text>
+                        <Form.Check
+                            type="checkbox"
+                            id="checkbox"
+                            label="Show password"
+                            onChange={()=> setShowPassword((showPassword)=>!showPassword)}
+                        />
                     </Form.Group>
                     <Button type='submit' variant="outline-primary" className="mr-5" >Sign up</Button><span className="ms-1 me-1"> or </span>
                     <Button type='submit' className="ml-5" >Login</Button>
