@@ -1,14 +1,14 @@
-import React, { useState, Dispatch, SetStateAction } from "react";
+import React, { useState } from "react";
 import { Modal, Button, FormControl, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useLogin } from "../Context/LoginContext"
 
 type Props = {
-    show?: boolean,
-    close: Dispatch<SetStateAction<boolean>>
+    show?: boolean
 }
 
 const LoginModal = (props: Props) => {
-
+    const { setIsLoggedIn, setLoggingAddress } = useLogin()
     const [showPassword, setShowPassword] = useState<boolean>(false)
     const [email, setEmail] = useState<string>('')
     const [emailValidate, setEmailValidate] = useState<boolean>(false)
@@ -27,10 +27,10 @@ const LoginModal = (props: Props) => {
 
         if (emailValidate || passwordValidate || emailLength || passwordLength) {
             setValidated(false);
-            console.log('here')
             return
         } else {
-            props.close(true)
+            setIsLoggedIn(true)
+            setLoggingAddress(email)
             setValidated(true);
         }
     };
@@ -53,10 +53,6 @@ const LoginModal = (props: Props) => {
         }
         setPasswordValidate(true)
     }
-
-    // console.log(emailValidate)
-    // console.log(passwordValidate)
-
 
     return (
         <Modal {...props}
@@ -84,7 +80,7 @@ const LoginModal = (props: Props) => {
                             type="checkbox"
                             id="checkbox"
                             label="Show password"
-                            onChange={()=> setShowPassword((showPassword)=>!showPassword)}
+                            onChange={() => setShowPassword((showPassword) => !showPassword)}
                         />
                     </Form.Group>
                     <Button type='submit' variant="outline-primary" className="mr-5" >Sign up</Button><span className="ms-1 me-1"> or </span>

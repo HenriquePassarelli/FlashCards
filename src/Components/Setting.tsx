@@ -1,6 +1,8 @@
-import React, { useState, Dispatch, SetStateAction } from "react";
+import React, { useState } from "react";
 import { Modal, Button, FormControl, Form, Row, Col } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+
+import { useLogin } from "../Context/LoginContext"
 
 type Props = {
     show?: boolean
@@ -8,7 +10,7 @@ type Props = {
 }
 
 const Settings = (props: Props) => {
-
+    const { loggingAddress } = useLogin()
     const [isEdit, setIsEdit] = useState<boolean>(false)
 
     const [showPassword, setShowPassword] = useState<boolean>(false)
@@ -17,9 +19,13 @@ const Settings = (props: Props) => {
     const [passwordValidate, setPasswordValidate] = useState<boolean>(false)
     const [passwordMatch, setPasswordMatch] = useState<boolean>(false)
 
-    const [city, setCity] = useState<string>('')
-    const [address, setAddress] = useState<string>('')
     const [name, setName] = useState<string>('')
+    const [city, setCity] = useState<string>('')
+    const [state, setState] = useState<string>('')
+    const [address, setAddress] = useState<string>('')
+
+    const [zip, setZip] = useState<string>('')
+
 
 
     const [validated, setValidated] = useState(false);
@@ -67,13 +73,13 @@ const Settings = (props: Props) => {
                 {isEdit ?
 
                     <Form validated={validated} onSubmit={handleSubmit}>
-                        <Form.Group className="mb-3" controlId="formGroupEmail">
+                        <Form.Group className="mb-3" >
                             <Form.Label>UserName</Form.Label>
-                            <FormControl type="text" placeholder="type your name" value={name} onChange={(e: { target: { value: any; }; }) => setName(e.target.value)} />
+                            <FormControl type="text" id="name" placeholder="type your name" value={name} onChange={(e: { target: { value: any; }; }) => setName(e.target.value)} />
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="formGroupEmail">
                             <Form.Label>Email address</Form.Label>
-                            <FormControl type="email" plaintext disabled value={"email.email.@email.com"} />
+                            <FormControl type="email" plaintext disabled value={loggingAddress} />
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="formGroupPassword">
                             <Form.Label>Change Password</Form.Label>
@@ -82,7 +88,7 @@ const Settings = (props: Props) => {
                                 Your password must be 8-20 characters long.
                             </Form.Text>
                         </Form.Group>
-                        <Form.Group className="mb-3" controlId="formGroupPassword">
+                        <Form.Group className="mb-3" controlId="formGroupPasswordCheck">
                             <Form.Label>Confirm Password</Form.Label>
                             <FormControl type={showPassword ? "text" : "password"} placeholder="Password" onBlur={secondPassword} onChange={(e: { target: { value: any; }; }) => setCheckPassword(e.target.value)} isInvalid={passwordMatch} />
                         </Form.Group>
@@ -105,7 +111,7 @@ const Settings = (props: Props) => {
 
                             <Form.Group as={Col} controlId="formGridState">
                                 <Form.Label>State</Form.Label>
-                                <Form.Select defaultValue="Choose...">
+                                <Form.Select value={state} onChange={(e: { target: { value: any; } }) => setState(e.target.value)}>
                                     <option>Choose...</option>
                                     <option>São Paulo</option>
                                 </Form.Select>
@@ -113,7 +119,7 @@ const Settings = (props: Props) => {
 
                             <Form.Group as={Col} controlId="formGridZip">
                                 <Form.Label>Zip</Form.Label>
-                                <Form.Control />
+                                <Form.Control value={zip} onChange={(e: { target: { value: any; } }) => setZip(e.target.value)} />
                             </Form.Group>
                         </Row>
                         <Button type='submit' className="me-3" onClick={() => setIsEdit(false)}>Save</Button>
@@ -122,13 +128,13 @@ const Settings = (props: Props) => {
                     </Form> :
 
                     <Form validated={validated} onSubmit={handleSubmit}>
-                        <Form.Group className="mb-3" controlId="formGroupEmail">
+                        <Form.Group className="mb-3" controlId="formGroupName">
                             <Form.Label>UserName</Form.Label>
-                            <FormControl className="ms-3" type="text" plaintext disabled value={"my name"} />
+                            <FormControl className="ms-3" type="text" plaintext disabled value={name || 'your name'} />
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="formGroupEmail">
                             <Form.Label>Email address</Form.Label>
-                            <FormControl className="ms-3"  type="email" plaintext disabled value={"email.email.@email.com"} />
+                            <FormControl className="ms-3" type="email" plaintext disabled value={loggingAddress} />
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="formGridAddress1">
@@ -139,17 +145,17 @@ const Settings = (props: Props) => {
                         <Row className="mb-3">
                             <Form.Group as={Col} controlId="formGridCity">
                                 <Form.Label>City</Form.Label>
-                                <Form.Control plaintext disabled value={city} />
+                                <Form.Control className="ms-3" plaintext disabled value={city} />
                             </Form.Group>
 
                             <Form.Group as={Col} controlId="formGridState">
                                 <Form.Label>State</Form.Label>
-                                <Form.Control plaintext disabled />
+                                <Form.Control className="ms-3" value={state} plaintext disabled />
                             </Form.Group>
 
                             <Form.Group as={Col} controlId="formGridZip">
                                 <Form.Label>Zip</Form.Label>
-                                <Form.Control plaintext disabled />
+                                <Form.Control className="ms-3" value={zip} plaintext disabled />
                             </Form.Group>
                         </Row>
                         <Button onClick={() => setIsEdit(true)}>Edit</Button>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Modal, Button, InputGroup, FormControl, Form, DropdownButton, Dropdown } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useCard } from "../Context/Context";
@@ -13,6 +13,15 @@ const CardModal = (props: Props): JSX.Element => {
   const [newTopic, setNewTopic] = useState<string>('')
   const [frontCard, setFrontCard] = useState<string>('')
   const [backCard, setBackCard] = useState<string>('')
+  const [withoutTopic, setWithoutTopic] = useState<boolean>(false)
+  const [withoutFront, setWithoutFront] = useState<boolean>(false)
+
+
+  const checkTopic = useMemo(() => {
+    if (newTopic !== "") {
+      setWithoutTopic(false)
+    }
+  }, [newTopic])
 
   const newListTopic = (): void => {
     if (topics.every(topic => topic !== newTopic)) {
@@ -28,10 +37,14 @@ const CardModal = (props: Props): JSX.Element => {
   }
 
   const addNewCard = () => {
-    setModalShow(false)
+    if (newTopic === '') {
+      setWithoutTopic(true)
+      return
+    }
     if (!topics.some(topic => newTopic === topic)) {
       newListTopic()
     }
+    setModalShow(false)
     const newCard = [...cards]
     newCard.push({ topic: newTopic, frontCard, backCard })
     setCards(newCard)
@@ -69,7 +82,10 @@ const CardModal = (props: Props): JSX.Element => {
 
           </DropdownButton>
 
-          <FormControl value={newTopic} onChange={(e: { target: { value: any; }; }) => setNewTopic(e.target.value)} id="list" aria-label="list" placeholder="Select one or type to add one " autoComplete="off" />
+          <FormControl value={newTopic} onChange={(e: { target: { value: any; }; }) => setNewTopic(e.target.value)}
+            id="list" aria-label="list"
+            placeholder="Select one or type to add one " autoComplete="off"
+            isInvalid={withoutTopic} />
           <Button onClick={newListTopic} variant="secondary" id="button-addon2">
             Add to list
           </Button>
