@@ -33,6 +33,8 @@ const Settings = (props: Props) => {
     const handleSubmit = (event: { currentTarget: any, preventDefault: () => any, stopPropagation: () => void }) => {
         event.preventDefault();
         const form = event.currentTarget;
+        if (passwordMatch) return;
+        console.log('return')
         if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();
@@ -41,18 +43,21 @@ const Settings = (props: Props) => {
 
         }
         setValidated(true);
+        setIsEdit(false)
     };
 
     const firstPassword = () => {
-        if (password.length > 8 && password.length < 20) {
+        if ((password.length > 8 && password.length < 20) || password.length === 0) {
             return setPasswordValidate(false)
         }
         setPasswordValidate(true)
     }
     const secondPassword = () => {
-        if (checkPassword === password || checkPassword.length === 0) {
+        if (password.length === 0) return setPasswordMatch(false)
+        if (checkPassword === password) {
             return setPasswordMatch(false)
         }
+
         setPasswordMatch(true)
     }
 
@@ -72,7 +77,7 @@ const Settings = (props: Props) => {
             <Modal.Body>
                 {isEdit ?
 
-                    <Form validated={validated} onSubmit={handleSubmit}>
+                    <Form onSubmit={handleSubmit}>
                         <Form.Group className="mb-3" >
                             <Form.Label>UserName</Form.Label>
                             <FormControl type="text" id="name" placeholder="type your name" value={name} onChange={(e: { target: { value: any; }; }) => setName(e.target.value)} />
@@ -122,7 +127,7 @@ const Settings = (props: Props) => {
                                 <Form.Control value={zip} onChange={(e: { target: { value: any; } }) => setZip(e.target.value)} />
                             </Form.Group>
                         </Row>
-                        <Button type='submit' className="me-3" onClick={() => setIsEdit(false)}>Save</Button>
+                        <Button type='submit' className="me-3">Save</Button>
                         <Button onClick={() => setIsEdit(false)} variant="outline-danger">Cancel</Button>
 
                     </Form> :
