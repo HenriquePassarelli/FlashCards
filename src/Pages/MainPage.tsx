@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Container, Navbar, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Button, Container, DropdownButton, Dropdown, Navbar, OverlayTrigger, Tooltip } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import LoginModal from '../Components/LoginModal'
 import CardModal from "../Components/CardModal";
@@ -13,8 +13,29 @@ import { useCard } from "../Context/Context";
 
 const Page = (): JSX.Element => {
   const { isLoggedIn, setIsLoggedIn } = useLogin()
-  const { modalShow, setModalShow, cards } = useCard();
+  const { modalShow, setModalShow, cards, topics } = useCard();
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
+
+  const filterDropdown = () => {
+    return (
+      <DropdownButton
+        variant="outline-secondary"
+        title="Filter"
+        id="input-group-dropdown-1"
+      >
+        {topics?.map((item, index) => {
+          return (
+            <Dropdown.Item key={index} value={item} onClick={(e) => handleSelect(e)}>{item}</Dropdown.Item>
+          )
+        })}
+
+      </DropdownButton>
+    )
+  }
+
+  const handleSelect = (e: React.MouseEvent<HTMLElement, MouseEvent>): void => {
+    const event = e.target as HTMLInputElement
+  }
 
   return (
     <Container style={{ height: '100%' }} fluid="md" className="container bg-dark rounded-bottom pb-3">
@@ -63,7 +84,10 @@ const Page = (): JSX.Element => {
         </Navbar.Text>
 
       </Navbar>
-      <Button variant="success" onClick={() => setModalShow(true)} >Add a new card</Button>
+      <section className="d-flex gap-3">
+        <Button variant="success" onClick={() => setModalShow(true)} >Add a new card</Button>
+        {cards.length > 0 && filterDropdown()}
+      </section>
       <CardModal show={modalShow} onHide={() => setModalShow(false)} />
       <Settings show={settingsOpen} onHide={() => setSettingsOpen(false)} />
       <section style={{ background: "var(--bs-gray-700)", minHeight: "50px" }} className="d-flex flex-wrap justify-content-center rounded m-3 pt-3 pb-3">
