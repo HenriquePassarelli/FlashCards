@@ -7,19 +7,21 @@ type Props = {
   header: string | null;
   front: string;
   back: string
+  idx: number
   id: number
 };
 
 const CardElement = (props: Props) => {
-  const { cards, setCards } = useCard();
+  const { setCards, cards } = useCard();
   const [flip, setFlip] = useState<boolean>(false)
   const deleteCard = () => {
     const copyCards = [...cards]
-    copyCards.splice(props.id, 1)
+    const index = copyCards.findIndex(card => card.id === props.id);
+    copyCards.splice(index, 1)
     setCards(copyCards)
   }
   return (
-    <Card key={props.id} style={{ width: '18rem' }} className=" m-2" >
+    <Card key={props.idx} style={{ width: '18rem' }} className=" m-2" >
       <Card.Header className="d-flex justify-content-between">{props.header} <CloseButton onClick={deleteCard} /></Card.Header>
       <Card.Body>
         {flip ?

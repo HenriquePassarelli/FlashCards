@@ -13,28 +13,36 @@ import { useCard } from "../Context/Context";
 
 const Page = (): JSX.Element => {
   const { isLoggedIn, setIsLoggedIn } = useLogin()
-  const { modalShow, setModalShow, cards, topics } = useCard();
+  const { modalShow, setModalShow, topics, filteredCards, setFilter } = useCard();
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
 
   const filterDropdown = () => {
     return (
-      <DropdownButton
-        variant="outline-secondary"
-        title="Filter"
-        id="input-group-dropdown-1"
-      >
-        {topics?.map((item, index) => {
-          return (
-            <Dropdown.Item key={index} value={item} onClick={(e) => handleSelect(e)}>{item}</Dropdown.Item>
-          )
-        })}
+      <>
+        <DropdownButton
+          variant="outline-secondary"
+          title="Filter"
+          id="input-group-dropdown-1"
+        >
+          {topics?.map((item, index) => {
+            return (
+              <Dropdown.Item key={index} value={item} onClick={handleSelect}>{item}</Dropdown.Item>
+            )
+          })}
 
-      </DropdownButton>
+        </DropdownButton>
+        <Button variant="outline-danger" onClick={clearFilter} >Clear</Button>
+      </>
     )
   }
 
   const handleSelect = (e: React.MouseEvent<HTMLElement, MouseEvent>): void => {
     const event = e.target as HTMLInputElement
+    setFilter(event.getAttribute("value"))
+  }
+
+  const clearFilter = () => {
+    setFilter('')
   }
 
   return (
@@ -86,14 +94,14 @@ const Page = (): JSX.Element => {
       </Navbar>
       <section className="d-flex gap-3">
         <Button variant="success" onClick={() => setModalShow(true)} >Add a new card</Button>
-        {cards.length > 0 && filterDropdown()}
+        {filteredCards.length > 0 && filterDropdown()}
       </section>
       <CardModal show={modalShow} onHide={() => setModalShow(false)} />
       <Settings show={settingsOpen} onHide={() => setSettingsOpen(false)} />
       <section style={{ background: "var(--bs-gray-700)", minHeight: "50px" }} className="d-flex flex-wrap justify-content-center rounded m-3 pt-3 pb-3">
-        {cards.map((item, index) => {
+        {filteredCards.map((item, index) => {
           return (
-            <CardElement key={index} id={index} header={item.topic} front={item.frontCard} back={item.backCard} />
+            <CardElement key={index} idx={index} id={item.id} header={item.topic} front={item.frontCard} back={item.backCard} />
           )
         })}
       </section>

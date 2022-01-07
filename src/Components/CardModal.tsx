@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useCallback } from "react";
 import { Modal, Button, InputGroup, FormControl, Form, DropdownButton, Dropdown } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useCard } from "../Context/Context";
@@ -9,19 +9,35 @@ type Props = {
 
 
 const CardModal = (props: Props): JSX.Element => {
-  const { setModalShow, topics, setTopics, setCards, cards } = useCard();
+  const { setModalShow, topics, setTopics, setCards, cards, setFilter } = useCard();
   const [newTopic, setNewTopic] = useState<string>('')
   const [frontCard, setFrontCard] = useState<string>('')
   const [backCard, setBackCard] = useState<string>('')
   const [withoutTopic, setWithoutTopic] = useState<boolean>(false)
   const [withoutFront, setWithoutFront] = useState<boolean>(false)
+  const [withoutBack, setWithoutBack] = useState<boolean>(false)
 
 
-  const checkTopic = useMemo(() => {
-    if (newTopic !== "") {
-      setWithoutTopic(false)
+  const checkTopic = useCallback(() => {
+    if (newTopic.length > 0) {
+      return setWithoutTopic(false)
     }
+    return setWithoutTopic(true)
   }, [newTopic])
+
+  const checkFront = useCallback(() => {
+    if (frontCard.length > 0) {
+      return setWithoutFront(false)
+    }
+    return setWithoutFront(true)
+  }, [frontCard])
+
+  const checkBack = useCallback(() => {
+    if (backCard !== "") {
+      return setWithoutBack(false)
+    }
+    return setWithoutBack(true)
+  }, [backCard])
 
   const newListTopic = (): void => {
     if (topics.every(topic => topic !== newTopic)) {
@@ -37,20 +53,22 @@ const CardModal = (props: Props): JSX.Element => {
   }
 
   const addNewCard = () => {
-    if (newTopic === '') {
-      setWithoutTopic(true)
-      return
-    }
+    checkTopic()
+    checkFront()
+    checkBack()
+    if (frontCard === '' || newTopic === '' || backCard === '') return
+
     if (!topics.some(topic => newTopic === topic)) {
       newListTopic()
     }
     setModalShow(false)
     const newCard = [...cards]
-    newCard.push({ topic: newTopic, frontCard, backCard })
+    newCard.push({ id: newCard.length + 1, topic: newTopic, frontCard, backCard })
     setCards(newCard)
     setFrontCard('')
     setBackCard('')
     setNewTopic('')
+    setFilter('')
   }
 
 
@@ -82,7 +100,10 @@ const CardModal = (props: Props): JSX.Element => {
 
           </DropdownButton>
 
-          <FormControl value={newTopic} onChange={(e: { target: { value: any; }; }) => setNewTopic(e.target.value)}
+          <FormControl value={newTopic} onChange={(e: { target: { value: any; }; }) => {
+            setNewTopic(e.target.value)
+            checkTopic()
+          }}
             id="list" aria-label="list"
             placeholder="Select one or type to add one " autoComplete="off"
             isInvalid={withoutTopic} />
@@ -92,11 +113,18 @@ const CardModal = (props: Props): JSX.Element => {
         </InputGroup>
         <Form.Label htmlFor="list">Front card</Form.Label>
         <InputGroup>
-          <FormControl as="textarea" aria-label="textarea" placeholder="Add your text here" onChange={(e: { target: { value: any; }; }) => setFrontCard(e.target.value)} />
+          <FormControl as="textarea" aria-label="textarea" placeholder="Add your text here" onChange={(e: { target: { value: any; }; }) => {
+            setFrontCard(e.target.value)
+            checkFront()
+          }}
+            isInvalid={withoutFront} />
         </InputGroup>
         <Form.Label htmlFor="list">Back card</Form.Label>
         <InputGroup>
-          <FormControl as="textarea" aria-label="textarea" placeholder="Add your text here" onChange={(e: { target: { value: any; }; }) => setBackCard(e.target.value)} />
+          <FormControl as="textarea" aria-label="textarea" placeholder="Add your text here" onChange={(e: { target: { value: any; }; }) => {
+            setBackCard(e.target.value)
+            checkBack()
+          }} isInvalid={withoutBack} />
         </InputGroup>
       </Modal.Body>
       <Modal.Footer>
