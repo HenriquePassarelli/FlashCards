@@ -49,12 +49,26 @@ export function CardContextProvider({ children }: ProviderProps): JSX.Element {
   useEffect(() => {
     const selectedCard = cards.filter(card => card.topic === filter)
 
+    topics.map((topic, idx) => {
+      const exist = cards.some(item => item.topic === topic)
+      if (!exist) {
+        removeTopic(idx)
+      }
+      return exist
+    })
+
     if (!!filter && selectedCard.length > 0) {
       return setFilteredCards(selectedCard)
     }
     setFilter('')
     setFilteredCards(cards)
   }, [filter, cards])
+
+  const removeTopic = (idx: number): void => {
+    const newTopic = [...topics]
+    newTopic.splice(idx, 1)
+    setTopics(newTopic)
+  }
 
 
   return (
