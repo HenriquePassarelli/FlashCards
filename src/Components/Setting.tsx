@@ -19,12 +19,11 @@ const Settings = (props: Props) => {
     const [passwordValidate, setPasswordValidate] = useState<boolean>(false)
     const [passwordMatch, setPasswordMatch] = useState<boolean>(false)
 
-    const [name, setName] = useState<string>('')
-    const [city, setCity] = useState<string>('')
-    const [state, setState] = useState<string>('')
-    const [address, setAddress] = useState<string>('')
-
-    const [zip, setZip] = useState<string>('')
+    const [name, setName] = useState<string>(localStorage!.getItem('flashcard/username') ?? '')
+    const [city, setCity] = useState<string>(localStorage.getItem('flashcard/city') ?? '')
+    const [state, setState] = useState<string>(localStorage.getItem('flashcard/state') ?? '')
+    const [address, setAddress] = useState<string>(localStorage.getItem('flashcard/address') ?? '')
+    const [zip, setZip] = useState<string>(localStorage.getItem('flashcard/zip') ?? '')
 
 
 
@@ -44,6 +43,11 @@ const Settings = (props: Props) => {
         }
         setValidated(true);
         setIsEdit(false)
+        localStorage.setItem('flashcard/username', name)
+        localStorage.setItem('flashcard/city', city)
+        localStorage.setItem('flashcard/state', state)
+        localStorage.setItem('flashcard/address', address)
+        localStorage.setItem('flashcard/zip', zip)
     };
 
     const firstPassword = () => {

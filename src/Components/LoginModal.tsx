@@ -32,6 +32,8 @@ const LoginModal = (props: Props) => {
             setIsLoggedIn(true)
             setLoggingAddress(email)
             setValidated(true);
+            localStorage.setItem('flashcard/email', email);
+            window.location.reload();
         }
     };
 

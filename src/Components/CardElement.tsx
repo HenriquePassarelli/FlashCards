@@ -25,9 +25,9 @@ const CardElement = (props: Props) => {
       <Card.Header className="d-flex justify-content-between">{props.header} <CloseButton onClick={deleteCard} /></Card.Header>
       <Card.Body>
         {flip ?
-          <Card.Text>{props.back}</Card.Text>
+          <Card.Text style={{ color: 'red' }}>{props.back}</Card.Text>
           :
-          <Card.Text>{props.front}</Card.Text>
+          <Card.Text >{props.front}</Card.Text>
         }
         <Button variant="dark" onClick={() => setFlip((flip) => !flip)}>Flip Card</Button>
       </Card.Body>
