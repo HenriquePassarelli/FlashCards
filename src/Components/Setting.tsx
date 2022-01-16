@@ -92,14 +92,14 @@ const Settings = (props: Props) => {
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="formGroupPassword">
                             <Form.Label>Change Password</Form.Label>
-                            <FormControl type={showPassword ? "text" : "password"} placeholder="Password" onBlur={firstPassword} onChange={(e: { target: { value: any; }; }) => setPassword(e.target.value)} isInvalid={passwordValidate} />
+                            <FormControl type={showPassword ? "text" : "password"} value={password} placeholder="Password" onBlur={firstPassword} onChange={(e: { target: { value: any; }; }) => setPassword(e.target.value)} isInvalid={passwordValidate} />
                             <Form.Text id="passwordHelpBlock" muted>
                                 Your password must be 8-20 characters long.
                             </Form.Text>
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="formGroupPasswordCheck">
                             <Form.Label>Confirm Password</Form.Label>
-                            <FormControl type={showPassword ? "text" : "password"} placeholder="Password" onBlur={secondPassword} onChange={(e: { target: { value: any; }; }) => setCheckPassword(e.target.value)} isInvalid={passwordMatch} />
+                            <FormControl type={showPassword ? "text" : "password"} value={checkPassword} placeholder="Password" onBlur={secondPassword} onChange={(e: { target: { value: any; }; }) => setCheckPassword(e.target.value)} isInvalid={passwordMatch} />
                         </Form.Group>
                         <Form.Check
                             type="checkbox"
@@ -137,32 +137,32 @@ const Settings = (props: Props) => {
                     </Form> :
 
                     <Form validated={validated} onSubmit={handleSubmit}>
-                        <Form.Group className="mb-3" controlId="formGroupName">
+                        <Form.Group className="mb-3" controlId="formGroupNameShow">
                             <Form.Label>UserName</Form.Label>
                             <FormControl className="ms-3" type="text" plaintext disabled value={name || 'your name'} />
                         </Form.Group>
-                        <Form.Group className="mb-3" controlId="formGroupEmail">
+                        <Form.Group className="mb-3" controlId="formGroupEmailShow">
                             <Form.Label>Email address</Form.Label>
                             <FormControl className="ms-3" type="email" plaintext disabled value={loggingAddress} />
                         </Form.Group>
 
-                        <Form.Group className="mb-3" controlId="formGridAddress1">
+                        <Form.Group className="mb-3" controlId="formGridAddress1Show">
                             <Form.Label>Address</Form.Label>
                             <Form.Control className="ms-3" plaintext disabled placeholder="1234 Main St" value={address} />
                         </Form.Group>
 
                         <Row className="mb-3">
-                            <Form.Group as={Col} controlId="formGridCity">
+                            <Form.Group as={Col} controlId="formGridCityShow">
                                 <Form.Label>City</Form.Label>
                                 <Form.Control className="ms-3" plaintext disabled value={city} />
                             </Form.Group>
 
-                            <Form.Group as={Col} controlId="formGridState">
+                            <Form.Group as={Col} controlId="formGridStateShow">
                                 <Form.Label>State</Form.Label>
                                 <Form.Control className="ms-3" value={state} plaintext disabled />
                             </Form.Group>
 
-                            <Form.Group as={Col} controlId="formGridZip">
+                            <Form.Group as={Col} controlId="formGridZipShow">
                                 <Form.Label>Zip</Form.Label>
                                 <Form.Control className="ms-3" value={zip} plaintext disabled />
                             </Form.Group>
