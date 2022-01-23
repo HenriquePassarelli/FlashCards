@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, Button, FormControl, Form, Row, Col } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useLogin } from "../Context/LoginContext";
 
-import { useLogin } from "../Context/LoginContext"
 
 type Props = {
     show?: boolean
@@ -10,7 +10,7 @@ type Props = {
 }
 
 const Settings = (props: Props) => {
-    const { loggingAddress } = useLogin()
+    const { config } = useLogin()
     const [isEdit, setIsEdit] = useState<boolean>(false)
 
     const [showPassword, setShowPassword] = useState<boolean>(false)
@@ -19,13 +19,24 @@ const Settings = (props: Props) => {
     const [passwordValidate, setPasswordValidate] = useState<boolean>(false)
     const [passwordMatch, setPasswordMatch] = useState<boolean>(false)
 
-    const [name, setName] = useState<string>(localStorage!.getItem('flashcard/username') ?? '')
-    const [city, setCity] = useState<string>(localStorage.getItem('flashcard/city') ?? '')
-    const [state, setState] = useState<string>(localStorage.getItem('flashcard/state') ?? '')
-    const [address, setAddress] = useState<string>(localStorage.getItem('flashcard/address') ?? '')
-    const [zip, setZip] = useState<string>(localStorage.getItem('flashcard/zip') ?? '')
+    const [name, setName] = useState<string>('')
+    const [city, setCity] = useState<string>('')
+    const [state, setState] = useState<string>('')
+    const [address, setAddress] = useState<string>('')
+    const [zip, setZip] = useState<string>('')
 
-
+    useEffect(() => {
+        setName(config?.name)
+        setCity(config?.city)
+        setState(config?.state)
+        setZip(config?.zip)
+        setAddress(config?.address)
+        console.log(config)
+    }, [config])
+    
+    useEffect(()=>{
+        !props.show && setIsEdit(false)
+    },[props.show])
 
     const [validated, setValidated] = useState(false);
 
@@ -43,11 +54,6 @@ const Settings = (props: Props) => {
         }
         setValidated(true);
         setIsEdit(false)
-        localStorage.setItem('flashcard/username', name)
-        localStorage.setItem('flashcard/city', city)
-        localStorage.setItem('flashcard/state', state)
-        localStorage.setItem('flashcard/address', address)
-        localStorage.setItem('flashcard/zip', zip)
     };
 
     const firstPassword = () => {
@@ -88,7 +94,7 @@ const Settings = (props: Props) => {
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="formGroupEmail">
                             <Form.Label>Email address</Form.Label>
-                            <FormControl type="email" plaintext disabled value={loggingAddress} />
+                            <FormControl type="email" plaintext disabled value={config?.email} />
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="formGroupPassword">
                             <Form.Label>Change Password</Form.Label>
@@ -143,7 +149,7 @@ const Settings = (props: Props) => {
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="formGroupEmailShow">
                             <Form.Label>Email address</Form.Label>
-                            <FormControl className="ms-3" type="email" plaintext disabled value={loggingAddress} />
+                            <FormControl className="ms-3" type="email" plaintext disabled value={config?.email} />
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="formGridAddress1Show">

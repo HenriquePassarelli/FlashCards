@@ -13,9 +13,10 @@ import React, {
 type LoginContextData = {
     isLoggedIn: boolean;
     setIsLoggedIn: Dispatch<SetStateAction<boolean>>
-    loggingAddress: string
-    setLoggingAddress: Dispatch<SetStateAction<string>>
+    loggingId: string
     logout: () => void
+    config: any
+
 };
 
 
@@ -27,20 +28,34 @@ type ProviderProps = {
 
 export function LoginContextProvider({ children }: ProviderProps): JSX.Element {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-    const [loggingAddress, setLoggingAddress] = useState<string>('')
+    const [loggingId, setLoggingId] = useState<string>('')
+    const [config, setConfig] = useState()
 
     useEffect(() => {
-        const loggedIn = localStorage.getItem('flashcard/email')
+        const loggedIn = localStorage.getItem('flashcard/userId')
 
         if (!!loggedIn) {
             setIsLoggedIn(true)
-            setLoggingAddress(loggedIn)
+            setLoggingId(loggedIn)
+
+            const url = `http://localhost:3004/config?userId=${loggingId}`
+            fetch(url).then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                } else {
+                    throw new Error('Something went wrong on api server!');
+                }
+            })
+                .then((data) => setConfig(data))
+                .catch((error) => console.log(error, 'something went wrong'))
+
+
         }
     }, [])
-
+    console.log(config)
 
     const logout = () => {
-        localStorage.removeItem('flashcard/email');
+        localStorage.removeItem('flashcard/userId');
         window.location.reload();
     }
 
@@ -48,7 +63,7 @@ export function LoginContextProvider({ children }: ProviderProps): JSX.Element {
 
     return (
         <LoginContext.Provider
-            value={{ isLoggedIn, setIsLoggedIn, loggingAddress, setLoggingAddress, logout }}
+            value={{ isLoggedIn, setIsLoggedIn, loggingId, logout, config }}
         >
             {children}
         </LoginContext.Provider>

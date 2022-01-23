@@ -38,7 +38,7 @@ const Page = (): JSX.Element => {
 
   const handleSelect = (e: React.MouseEvent<HTMLElement, MouseEvent>): void => {
     const event = e.target as HTMLInputElement
-    setFilter(event.getAttribute("value"))
+    setFilter(event?.getAttribute("value") || '')
   }
 
   const clearFilter = () => {

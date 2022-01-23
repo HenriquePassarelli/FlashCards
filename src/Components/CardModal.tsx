@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Modal, Button, InputGroup, FormControl, Form, DropdownButton, Dropdown } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useCard } from "../Context/Context";
+import { useCard, Cards } from "../Context/Context";
+import { useLogin } from "../Context/LoginContext";
 type Props = {
   show?: boolean,
   onHide: () => void
@@ -10,6 +11,7 @@ type Props = {
 
 const CardModal = (props: Props): JSX.Element => {
   const { setModalShow, topics, setTopics, setCards, cards } = useCard();
+  const { loggingId } = useLogin()
   const [newTopic, setNewTopic] = useState<string>('')
   const [frontCard, setFrontCard] = useState<string>('')
   const [backCard, setBackCard] = useState<string>('')
@@ -27,18 +29,48 @@ const CardModal = (props: Props): JSX.Element => {
     setNewTopic(Object.values(event)[1].value)
   }
 
-  const addNewCard = () => {
+  const addNewCard = (): void => {
 
     if (frontCard === '' || newTopic === '' || backCard === '') return
 
     if (!topics.some(topic => newTopic === topic)) {
       newListTopic()
     }
-    setModalShow(false)
+
     const newCard = [...cards]
-    newCard.push({ id: newCard.length + 1, topic: newTopic, frontCard, backCard })
-    setCards(newCard)
+
+    const cardData = { userId: loggingId, id: newCard.length + 1, topic: newTopic, frontCard, backCard }
+    newCard.push(cardData)
+
+    const url = `http://localhost:3004/cards`
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(cardData)
+    }).then((response) => {
+      if (response.ok) {
+        setModalShow(false)
+        setCards(newCard)
+        clear()
+        return response.json();
+      } else {
+        throw new Error('Something went wrong on api server!');
+      }
+    })
+      .catch((error) => console.log(error, 'something went wrong'))
+
+
   }
+
+  const clear = () => {
+    setFrontCard('')
+    setBackCard('')
+    setNewTopic('')
+  }
+
 
 
   return (

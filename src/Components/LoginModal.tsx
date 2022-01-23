@@ -8,7 +8,7 @@ type Props = {
 }
 
 const LoginModal = (props: Props) => {
-    const { setIsLoggedIn, setLoggingAddress } = useLogin()
+    const { setIsLoggedIn } = useLogin()
     const [showPassword, setShowPassword] = useState<boolean>(false)
     const [email, setEmail] = useState<string>('')
     const [emailValidate, setEmailValidate] = useState<boolean>(false)
@@ -30,9 +30,8 @@ const LoginModal = (props: Props) => {
             return
         } else {
             setIsLoggedIn(true)
-            setLoggingAddress(email)
             setValidated(true);
-            localStorage.setItem('flashcard/email', email);
+            localStorage.setItem('flashcard/userId', "1");
             window.location.reload();
         }
     };

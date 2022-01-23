@@ -1,0 +1,27 @@
+{
+  "config": {
+    "userId": "1",
+    "name": "Henrique Passarelli",
+    "email": "henrique.passarelli@gmail.com",
+    "city": "Sao Paulo",
+    "state": "Sao Paulo",
+    "zip": "12039021",
+    "address": "Rua 10"
+  },
+  "cards": [
+    {
+      "userId": "1",
+      "id": 1,
+      "topic": "English",
+      "frontCard": "My card",
+      "backCard": "My card back"
+    },
+    {
+      "userId": "1",
+      "id": 2,
+      "topic": "Poetuguese",
+      "frontCard": "test card2",
+      "backCard": "test card3"
+    }
+  ]
+}

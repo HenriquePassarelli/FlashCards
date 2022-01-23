@@ -7,26 +7,27 @@ import React, {
   SetStateAction,
   useEffect,
 } from "react";
+import { useLogin } from "./LoginContext";
+import _ from 'lodash'
 
-type Cards = {
-  topic: string | null,
+export type Cards = {
+  topic: string,
   frontCard: string
   backCard: string
   id: number
+  userId: string
 }
 
 type CardContextData = {
   cards: Cards[];
   setCards: Dispatch<SetStateAction<Array<Cards>>>;
-  addCard: () => void;
-  deleteCard: () => void;
   modalShow: boolean;
   setModalShow: React.Dispatch<React.SetStateAction<boolean>>
   topics: string[]
   setTopics: Dispatch<SetStateAction<string[]>>
   filteredCards: Cards[]
   setFilteredCards: Dispatch<SetStateAction<Array<Cards>>>
-  setFilter: Dispatch<SetStateAction<string | null>>
+  setFilter: Dispatch<SetStateAction<string>>
 };
 
 
@@ -37,17 +38,36 @@ type ProviderProps = {
 };
 
 export function CardContextProvider({ children }: ProviderProps): JSX.Element {
+  const { isLoggedIn, loggingId } = useLogin()
   const [cards, setCards] = useState<Cards[]>([]);
   const [filteredCards, setFilteredCards] = useState<Cards[]>([]);
   const [modalShow, setModalShow] = useState<boolean>(false);
   const [topics, setTopics] = useState<string[]>([])
-  const [filter, setFilter] = useState<string | null>('')
-
-  const addCard = () => { };
-  const deleteCard = () => { };
+  const [filter, setFilter] = useState<string>('')
 
   useEffect(() => {
-    const selectedCard = cards.filter(card => card.topic === filter)
+    if (isLoggedIn) {
+
+      const url = `http://localhost:3004/cards?userId=${loggingId}`
+      fetch(url).then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } else {
+          throw new Error('Something went wrong on api server!');
+        }
+      })
+        .then((data) => {
+          const mapTopics = data?.map((item: { topic: any; }) => item.topic)
+          setCards(data)
+          setTopics(_.uniq(mapTopics))
+        })
+        .catch((error) => console.log(error, 'something went wrong'))
+    }
+
+  }, [isLoggedIn])
+
+  useEffect(() => {
+    const selectedCard = cards.filter(card => card?.topic === filter)
 
     topics.map((topic, idx) => {
       const exist = cards.some(item => item.topic === topic)
@@ -73,7 +93,7 @@ export function CardContextProvider({ children }: ProviderProps): JSX.Element {
 
   return (
     <CardContext.Provider
-      value={{ cards, setCards, addCard, deleteCard, setModalShow, modalShow, topics, setTopics, filteredCards, setFilteredCards, setFilter }}
+      value={{ cards, setCards, setModalShow, modalShow, topics, setTopics, filteredCards, setFilteredCards, setFilter }}
     >
       {children}
     </CardContext.Provider>

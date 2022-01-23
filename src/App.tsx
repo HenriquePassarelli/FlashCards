@@ -5,7 +5,7 @@ import Page from "./Pages/MainPage";
 export default function App() {
   return (
     <div className="App">
-      <LoginContextProvider>
+      <LoginContextProvider >
         <CardContextProvider>
           <Page />
         </CardContextProvider>
