@@ -2,80 +2,36 @@ import React, { useState, useMemo } from "react";
 import { Modal, Button, FormControl, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useLogin } from "../Context/LoginContext"
+import { useForm, SubmitHandler } from "react-hook-form";
 import _ from 'lodash'
-
 type Props = {
     show?: boolean
+}
+
+type Inputs = {
+    email: string
+    password: string
+    checkPassword: string
 }
 
 const LoginModal = (props: Props) => {
     const { setIsLoggedIn } = useLogin()
     const [singUp, setSingUp] = useState<boolean>(false)
+    const { register, handleSubmit, watch, formState: { errors } } = useForm<Inputs>();
 
     const [showPassword, setShowPassword] = useState<boolean>(false)
-    const [email, setEmail] = useState<string>('')
-    const [emailValidate, setEmailValidate] = useState<boolean>(false)
-    const [password, setPassword] = useState<string>('')
-    const [confirmPassword, setConfirmPassword] = useState<string>('')
-
-    const [passwordValidate, setPasswordValidate] = useState<boolean>(false)
-
-
     const [validated, setValidated] = useState(false);
 
+    const onSubmit: SubmitHandler<Inputs> = data => {
+        console.log('here')
+        // alert(JSON.stringify(data));
+        console.log(watch("password"))
 
-
-    const handleSubmit = (event: { currentTarget: any, preventDefault: () => any, stopPropagation: () => void }) => {
-        event.preventDefault();
-        event.stopPropagation();
-        let checkLength = email.length === 0 && password.length === 0
-        if (singUp) checkLength = checkLength && confirmPassword.length === 0
-
-        validateEmail()
-        validatePassword()
-        console.log(checkLength)
-        if (emailValidate || passwordValidate || checkLength || validatePasswordMatch) {
-            setValidated(false);
-            return
-        } else {
-            /* setIsLoggedIn(true)
-            setValidated(true);
-            localStorage.setItem('flashcard/userId', "1");
-            window.location.reload(); */
-        }
+        // setIsLoggedIn(true)
+        // setValidated(true);
+        // localStorage.setItem('flashcard/userId', "1");
+        // window.location.reload();
     };
-
-    const validateEmail = () => {
-        const isValid = email.match(
-            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-        );
-        if (isValid !== null) {
-            setEmailValidate(false)
-            return
-        }
-        setEmailValidate(true)
-
-    }
-
-    const validatePassword = () => {
-        if (password.length >= 8 && password.length < 20) {
-            return setPasswordValidate(false)
-        }
-        setPasswordValidate(true)
-    }
-
-    const validatePasswordMatch = useMemo(() => {
-        if (password.length >= 8 && password.length < 20 && confirmPassword.length > 0) {
-
-            return !(confirmPassword === password)
-        }
-        else {
-
-            return false
-
-        }
-    }, [confirmPassword, password])
-
 
     return (
         <Modal {...props}
@@ -83,34 +39,38 @@ const LoginModal = (props: Props) => {
             aria-labelledby="contained-modal-title-vcenter"
             centered>
             <Modal.Body>
-                <Form validated={validated} onSubmit={handleSubmit}>
+                <Form validated={validated} onSubmit={handleSubmit(onSubmit)}>
                     <Form.Group className="mb-3" controlId="formGroupEmail">
                         <Form.Label>Email address</Form.Label>
-                        <FormControl type="email" placeholder="Enter email" onChange={(e: { target: { value: any; }; }): void => {
-                            setEmail(e.target.value)
-                        }} onBlur={validateEmail} isInvalid={emailValidate} />
+                        <FormControl type="email" placeholder="Enter email" {...register("email", { required: "You must specify an email" })} isInvalid={errors.email ? true : false} />
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formGroupPassword">
                         <Form.Label>Password</Form.Label>
-                        <FormControl type={showPassword ? "text" : "password"} placeholder="Password" onChange={(e: { target: { value: any; }; }): void => {
-
-                            setPassword(e.target.value)
-                        }} onBlur={validatePassword} isInvalid={passwordValidate} />
+                        <FormControl type={showPassword ? "text" : "password"}  {...register("password", {
+                            required: "You must specify a password", minLength: {
+                                value: 8,
+                                message: "Password must have at least 8 characters"
+                            }
+                        })} placeholder="Password" />
                         <Form.Text id="passwordHelpBlock" muted>
-                            Your password must be 8-20 characters long.
+                            {_.get(errors, 'password.message')}
                         </Form.Text>
                     </Form.Group>
                     {singUp && <Form.Group className="mb-3" controlId="fromGroupPasswordCheck">
                         <Form.Label>Password Check</Form.Label>
-                        <FormControl type={showPassword ? "text" : "password"} placeholder="Check Password" onChange={(e: { target: { value: any; }; }): void => {
-
-                            setConfirmPassword(e.target.value)
-                        }} isInvalid={validatePasswordMatch} />
+                        <FormControl type={showPassword ? "text" : "password"} placeholder="Check Password" {...register("checkPassword", {
+                            required: true, validate: value =>
+                                value === watch("password") || "The passwords do not match"
+                        })} />
+                        <Form.Text id="passwordHelpBlock" muted>
+                            {_.get(errors, 'checkPassword.message')}
+                        </Form.Text>
                     </Form.Group>}
+
                     <Form.Check
                         type="checkbox"
                         id="checkbox"
-                        label="Show password"
+                        className="mb-3" label="Show password"
                         onChange={() => setShowPassword((showPassword) => !showPassword)}
                     />
                     <Button type='button' variant="outline-none" className="mr-5" onClick={() => setSingUp(state => !state)}>Sign up</Button><span className="ms-1 me-1"> or </span>
