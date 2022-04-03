@@ -3,7 +3,10 @@ import { Modal, Button, FormControl, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useLogin } from "../Context/LoginContext"
 import { useForm, SubmitHandler } from "react-hook-form";
+import { loginUser } from "../Helpers/loginUser"
 import _ from 'lodash'
+
+
 type Props = {
     show?: boolean
 }
@@ -25,17 +28,23 @@ const LoginModal = (props: Props) => {
     const onSubmit: SubmitHandler<Inputs> = data => {
         console.log('here')
         // alert(JSON.stringify(data));
-        console.log(watch("password"))
+        const username = watch("email")
+        const password = watch("password")
+        
+        const token = loginUser({ username, password })
 
+        console.log(token)
         // setIsLoggedIn(true)
         // setValidated(true);
         // localStorage.setItem('flashcard/userId', "1");
         // window.location.reload();
     };
 
+
+
     return (
         <Modal {...props}
-            size="lg"
+            size="sm"
             aria-labelledby="contained-modal-title-vcenter"
             centered>
             <Modal.Body>
@@ -73,7 +82,7 @@ const LoginModal = (props: Props) => {
                         className="mb-3" label="Show password"
                         onChange={() => setShowPassword((showPassword) => !showPassword)}
                     />
-                    <Button type='button' variant="outline-none" className="mr-5" onClick={() => setSingUp(state => !state)}>Sign up</Button><span className="ms-1 me-1"> or </span>
+                    <Button variant="outline-none" className="mr-5" onClick={() => setSingUp(state => !state)}>{!singUp ? 'Sign up ' : 'Login '}-</Button>
                     <Button type='submit' className="ml-5" >{singUp ? 'Register' : 'Login'}</Button>
                 </Form>
             </Modal.Body>
