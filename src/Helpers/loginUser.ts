@@ -1,5 +1,5 @@
 type Param = {
-    username: string
+    email: string
     password: string,
 }
 

@@ -11,12 +11,11 @@ import React, {
 
 
 type LoginContextData = {
-    isLoggedIn: boolean;
-    setIsLoggedIn: Dispatch<SetStateAction<boolean>>
     loggingId: string
     logout: () => void
     config: any
-
+    isLoggedIn: boolean
+    setIsLoggedIn: Dispatch<SetStateAction<boolean>>
 };
 
 
@@ -27,15 +26,15 @@ type ProviderProps = {
 };
 
 export function LoginContextProvider({ children }: ProviderProps): JSX.Element {
+
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [loggingId, setLoggingId] = useState<string>('')
     const [config, setConfig] = useState()
 
-    useEffect(() => {
+    /* useEffect(() => {
         const loggedIn = localStorage.getItem('flashcard/userId')
 
         if (!!loggedIn) {
-            setIsLoggedIn(true)
             setLoggingId(loggedIn)
 
             const url = `http://localhost:3004/config?userId=${loggingId}`
@@ -51,8 +50,8 @@ export function LoginContextProvider({ children }: ProviderProps): JSX.Element {
 
 
         }
-    }, [])
-    console.log(config)
+    }, []) */
+    // console.log(config)
 
     const logout = () => {
         localStorage.removeItem('flashcard/userId');
@@ -60,10 +59,9 @@ export function LoginContextProvider({ children }: ProviderProps): JSX.Element {
     }
 
 
-
     return (
         <LoginContext.Provider
-            value={{ isLoggedIn, setIsLoggedIn, loggingId, logout, config }}
+            value={{ loggingId, logout, config, isLoggedIn, setIsLoggedIn }}
         >
             {children}
         </LoginContext.Provider>

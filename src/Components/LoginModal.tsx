@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import { Modal, Button, FormControl, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useLogin } from "../Context/LoginContext"
+import  useToken  from '../hooks/useToken'
 import { useForm, SubmitHandler } from "react-hook-form";
 import { loginUser } from "../Helpers/loginUser"
 import _ from 'lodash'
@@ -18,20 +19,18 @@ type Inputs = {
 }
 
 const LoginModal = (props: Props) => {
-    const { setIsLoggedIn } = useLogin()
+    const { setToken,token } = useToken()
     const [singUp, setSingUp] = useState<boolean>(false)
     const { register, handleSubmit, watch, formState: { errors } } = useForm<Inputs>();
 
     const [showPassword, setShowPassword] = useState<boolean>(false)
     const [validated, setValidated] = useState(false);
 
-    const onSubmit: SubmitHandler<Inputs> = data => {
-        console.log('here')
-        // alert(JSON.stringify(data));
-        const username = watch("email")
-        const password = watch("password")
-        
-        const token = loginUser({ username, password })
+    const onSubmit: SubmitHandler<Inputs> = async (data) => {
+        console.log(data)
+        const token = await loginUser(data)
+
+        setToken(token)
 
         console.log(token)
         // setIsLoggedIn(true)
@@ -41,6 +40,7 @@ const LoginModal = (props: Props) => {
     };
 
 
+    console.log(token)
 
     return (
         <Modal {...props}
@@ -82,8 +82,8 @@ const LoginModal = (props: Props) => {
                         className="mb-3" label="Show password"
                         onChange={() => setShowPassword((showPassword) => !showPassword)}
                     />
-                    <Button variant="outline-none" className="mr-5" onClick={() => setSingUp(state => !state)}>{!singUp ? 'Sign up ' : 'Login '}-</Button>
-                    <Button type='submit' className="ml-5" >{singUp ? 'Register' : 'Login'}</Button>
+                    <Button variant="outline-none" className="me-4 btn-link" onClick={() => setSingUp(state => !state)}>{!singUp ? 'Sign up' : 'Back'}</Button>
+                    <Button type='submit' className="ps-5 pe-5" >{singUp ? 'Register' : 'Login'}</Button>
                 </Form>
             </Modal.Body>
         </Modal>
